@@ -22,6 +22,19 @@ describe("Board", function(){
   it("accepts a jQuery element representing the game board.", function(){
     expect(board.$el).toEqual($("#board"));
   });
+
+  describe("#setMarker", function(){
+    it("sets a marker at a given row and col position", function(){
+      board.setMarker(0, 0, 'X');
+      expect(board.$el.find("tr:eq(0) td:eq(0)").html()).toEqual('X');
+    });
+
+    it("does not allow a marker to be placed if one exists there already", function(){
+      board.setMarker(0, 0, 'X');
+      board.setMarker(0, 0, 'O');
+      expect(board.$el.find("tr:eq(0) td:eq(0)").html()).not.toEqual('O');
+    });
+  });
 });
 
 
