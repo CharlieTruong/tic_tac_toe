@@ -35,6 +35,27 @@ describe("Board", function(){
       expect(board.$el.find("tr:eq(0) td:eq(0)").html()).not.toEqual('O');
     });
   });
+
+  describe("#playerMarker",function(){
+    it("sets a marker to identify the human player in the game", function(){
+      board.playerMarker = 'X';
+      expect(board.playerMarker).toEqual('X');
+    });
+  });
+
+  describe("#clickTableCell", function(){
+    it("#setMarker is called when a table cell is clicked", function(){
+      spyOn(board,'setMarker');
+      board.$el.find("tr:eq(0) td:eq(0)").trigger("click");
+      expect(board.setMarker).toHaveBeenCalled();
+    });
+
+    it("adds the player's marker to the chosen cell", function(){
+      board.playerMarker = 'O';
+      board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
+      expect(board.$el.find("tr:eq(2) td:eq(2)").html()).toEqual('O');
+    });
+  });
 });
 
 
