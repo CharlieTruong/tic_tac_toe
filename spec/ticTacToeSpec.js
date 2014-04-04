@@ -56,6 +56,29 @@ describe("Board", function(){
       expect(board.$el.find("tr:eq(2) td:eq(2)").html()).toEqual('O');
     });
   });
+
+  describe("#checkWinner", function(){
+    it("returns true if three markers of the same kind appear vertically", function(){
+      board.setMarker(0,1,"X");
+      board.setMarker(1,1,"X");
+      board.setMarker(2,1,"X");
+      expect(board.checkWinner()).toEqual(true);
+    });
+
+    it("returns true if three markers of the same kind appear horizontally", function(){
+      board.setMarker(2,0,"X");
+      board.setMarker(2,1,"X");
+      board.setMarker(2,2,"X");
+      expect(board.checkWinner()).toEqual(true);
+    });
+
+    it("returns true if three markers of the same kind appear diagonally", function(){
+      board.setMarker(0,0,"X");
+      board.setMarker(1,1,"X");
+      board.setMarker(2,2,"X");
+      expect(board.checkWinner()).toEqual(true);
+    });
+  });
 });
 
 
