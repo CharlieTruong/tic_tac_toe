@@ -62,7 +62,13 @@ Board.prototype = (function(){
 
     checkWinner: function(){
       return checkVertical(this) || checkHorizontal(this) || checkDiagonals(this);
-    } 
+    },
+
+    clearMarkers: function(){
+      this.$el.find("td").each(function(){
+        $(this).html("");
+      });
+    }
   };
 })();
 

@@ -79,6 +79,16 @@ describe("Board", function(){
       expect(board.checkWinner()).toEqual(true);
     });
   });
+
+  describe("#clearMarkers", function(){
+    it("clears the board of all markers", function(){
+      board.setMarker(1,1,"X");
+      board.setMarker(2,2,"X");
+      board.clearMarkers();
+      expect(board.$el.find("tr:eq(1) td:eq(1)").html()).toEqual("");
+      expect(board.$el.find("tr:eq(2) td:eq(2)").html()).toEqual("");
+    });
+  });
 });
 
 
