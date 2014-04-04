@@ -2,6 +2,10 @@ function Game() {
   this.won = false;
 }
 
+function Player(marker){
+  this.marker = marker;
+}
+
 function Board(el){
   this.$el = el;
   this.playerMarker = "";
