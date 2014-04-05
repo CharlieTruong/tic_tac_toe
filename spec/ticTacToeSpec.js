@@ -33,6 +33,21 @@ describe("Player", function(){
   });
 });
 
+describe("CPU", function(){
+  var cpu;
+
+  beforeEach(function(){
+    var player = new Player('X');
+    cpu = new CPU(player.marker);
+  });
+
+  describe("#marker",function(){
+    it("returns the opposite of the player marker", function(){
+      expect(cpu.marker).toEqual('O');
+    });
+  });
+});
+
 describe("Board", function(){
   var board;
 

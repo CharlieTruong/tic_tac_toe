@@ -15,6 +15,10 @@ function Player(marker){
   this.marker = marker;
 }
 
+function CPU(playerMarker){
+  this.marker = playerMarker === 'X' ? 'O' : 'X';
+}
+
 function Board(el){
   this.$el = el;
   this.playerMarker = "";
