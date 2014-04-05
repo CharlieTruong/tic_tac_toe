@@ -1,5 +1,14 @@
-function Game() {
+function Game(boardEl, playerMarker) {
   this.won = false;
+  this.board = new Board(boardEl);
+  this.player = new Player(playerMarker);
+  var self = this;
+
+  this.board.$el.find("td").click(function(){
+    var row = $(this).parent().parent().children().index($(this).parent());
+    var col = $(this).parent().children().index($(this));
+    self.board.setMarker(row, col, self.player.marker);
+  });
 }
 
 function Player(marker){
@@ -10,12 +19,6 @@ function Board(el){
   this.$el = el;
   this.playerMarker = "";
   var self = this;
-
-  this.$el.find("td").click(function(){
-    var row = $(this).parent().parent().children().index($(this).parent());
-    var col = $(this).parent().children().index($(this));
-    self.setMarker(row, col, self.playerMarker);
-  });
 
 }
 

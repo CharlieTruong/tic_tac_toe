@@ -2,26 +2,26 @@ describe("Game", function() {
   var game;
 
   beforeEach(function() {
-    game = new Game();
+    setUpHTMLFixture();  
+    game = new Game($("#board"),"X");
   });
 
   it("a new game has a win status of 'false.'", function() {
     expect(game.won).toEqual(false);
   });
 
-  // describe("#clickTableCell", function(){
-  //   it("Board#setMarker is called when a table cell is clicked", function(){
-  //     spyOn(board,'setMarker');
-  //     board.$el.find("tr:eq(0) td:eq(0)").trigger("click");
-  //     expect(board.setMarker).toHaveBeenCalled();
-  //   });
+  describe("#clickTableCell", function(){
+    it("Board#setMarker is called when a table cell is clicked", function(){
+      spyOn(game.board,'setMarker');
+      game.board.$el.find("tr:eq(0) td:eq(0)").trigger("click");
+      expect(game.board.setMarker).toHaveBeenCalled();
+    });
 
-  //   it("adds the player's marker to the chosen cell", function(){
-  //     board.playerMarker = 'O';
-  //     board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
-  //     expect(board.$el.find("tr:eq(2) td:eq(2)").html()).toEqual('O');
-  //   });
-  // });
+    it("adds the player's marker to the chosen cell", function(){
+      game.board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
+      expect(game.board.$el.find("tr:eq(2) td:eq(2)").html()).toEqual('X');
+    });
+  });
 });
 
 describe("Player", function(){
@@ -35,7 +35,6 @@ describe("Player", function(){
 
 describe("Board", function(){
   var board;
-  var fixture;
 
   beforeEach(function() {
     setUpHTMLFixture();  
