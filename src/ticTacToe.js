@@ -1,18 +1,34 @@
-function Game(boardEl, playerMarker) {
+$(document).ready(function(){
+  var game = new Game($("#settings"), $("#board"));
+});
+
+function Game(settingsEl, boardEl) {
   this.won = false;
+  this.$settings = settingsEl;
   this.board = new Board(boardEl);
-  this.player = new Player(playerMarker);
+  this.playerMarker;
+  this.playerTurn;
+  this.cpu;
   var self = this;
 
   this.board.$el.find("td").click(function(){
     var row = $(this).parent().parent().children().index($(this).parent());
     var col = $(this).parent().children().index($(this));
-    self.board.setMarker(row, col, self.player.marker);
+    self.board.setMarker(row, col, self.playerMarker);
   });
-}
 
-function Player(marker){
-  this.marker = marker;
+  this.$settings.submit(function(e){
+    e.preventDefault();
+    if($("input:checked").length === 0){
+      alert("All settings need to be checked first before the game begins.");
+    }
+    else{
+      self.board.clearMarkers();
+      self.playerMarker = $("input[name='marker']:checked").val();
+      self.playerTurn = $("input[name='turn']:checked").val();
+      self.cpu = new CPU(self.playerMarker);
+    }
+  });
 }
 
 function CPU(playerMarker){
@@ -21,9 +37,6 @@ function CPU(playerMarker){
 
 function Board(el){
   this.$el = el;
-  this.playerMarker = "";
-  var self = this;
-
 }
 
 Board.prototype = (function(){

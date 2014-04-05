@@ -3,11 +3,19 @@ describe("Game", function() {
 
   beforeEach(function() {
     setUpHTMLFixture();  
-    game = new Game($("#board"),"X");
+    game = new Game($("#settings"), $("#board"));
   });
 
   it("a new game has a win status of 'false.'", function() {
     expect(game.won).toEqual(false);
+  });
+
+  it("has a 'settings' property that is the jQuery object of the element with id #settings", function(){
+    expect(game.$settings).toEqual($("#settings"));
+  });
+
+  it("has a 'board' property that is an instance of Board", function(){
+    expect(game.board.constructor).toEqual(Board);
   });
 
   describe("#clickTableCell", function(){
@@ -18,17 +26,42 @@ describe("Game", function() {
     });
 
     it("adds the player's marker to the chosen cell", function(){
+      game.playerMarker = 'X';
       game.board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
       expect(game.board.$el.find("tr:eq(2) td:eq(2)").html()).toEqual('X');
     });
   });
-});
 
-describe("Player", function(){
-  describe("#marker",function(){
-    it("a new player is initialized with a marker of 'X' or 'O'.", function(){
-      var player = new Player('X');
-      expect(player.marker).toEqual('X');
+  describe("#click new game with no selections", function(){
+    it("does not start a game unless a player chooses all settings", function(){
+      var spy = spyOn(window,'alert');
+      $("#settings input[type='submit']").trigger("click");
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe("#click new game with selections", function(){
+
+    beforeEach(function(){
+      $("input[value='O']").trigger("click");
+      $("input[value='first']").trigger("click");
+    });
+
+    it("clears the board", function(){
+      var spy = spyOn(game.board,'clearMarkers');
+      $("#settings input[type='submit']").trigger("click");
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("sets the playerMarker and playerTurn based on the selection", function(){
+      $("#settings input[type='submit']").trigger("click");
+      expect(game.playerMarker).toEqual('O');
+      expect(game.playerTurn).toEqual('first');
+    });
+
+    it("instantiates and sets the cpu in the game", function(){
+      $("#settings input[type='submit']").trigger("click");
+      expect(game.cpu.constructor).toEqual(CPU);
     });
   });
 });
@@ -37,8 +70,8 @@ describe("CPU", function(){
   var cpu;
 
   beforeEach(function(){
-    var player = new Player('X');
-    cpu = new CPU(player.marker);
+    var playerMarker = 'X'
+    cpu = new CPU(playerMarker);
   });
 
   describe("#marker",function(){
@@ -113,6 +146,13 @@ function setUpHTMLFixture() {
              +'  <tr><td></td><td></td><td></td></tr>'
              +'  <tr><td></td><td></td><td></td></tr>'
              +'  <tr><td></td><td></td><td></td></tr>'
-             +'</table>');
+             +'</table>'
+             +'<form id="settings">'
+             +'   <input type="radio" name="marker" value="X">X'
+             +'   <input type="radio" name="marker" value="O">O<br>'
+             +'   <input type="radio" name="turn" value="first">First'
+             +'   <input type="radio" name="turn" value="last">Last<br>'
+             +'   <input type="submit" value="New Game">'
+             +'</form>');
       
 }
