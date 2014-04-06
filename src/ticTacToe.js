@@ -12,27 +12,63 @@ function Game(settingsEl, boardEl) {
   var self = this;
 
   this.board.$el.find("td").click(function(){
-    var row = $(this).parent().parent().children().index($(this).parent());
-    var col = $(this).parent().children().index($(this));
-    self.board.setMarker(row, col, self.playerMarker);
+    self.playerMove(this);
+    self.checkGameOver();
+    var move = self.cpu.nextMove(self.board);
+    self.board.setMarker(move.row, move.col, self.cpu.marker);
+    self.checkGameOver();
   });
 
   this.$settings.submit(function(e){
     e.preventDefault();
-    if($("input:checked").length === 0){
+    if(self.$settings.find("input:checked").length === 0){
       alert("All settings need to be checked first before the game begins.");
     }
     else{
-      self.board.clearMarkers();
-      self.playerMarker = $("input[name='marker']:checked").val();
-      self.playerTurn = $("input[name='turn']:checked").val();
-      self.cpu = new CPU(self.playerMarker);
+      self.start();
     }
   });
 }
 
+Game.prototype.start = function(){
+  this.board.clearMarkers();
+  this.playerMarker = this.$settings.find("input[name='marker']:checked").val();
+  this.playerTurn = this.$settings.find("input[name='turn']:checked").val();
+  this.cpu = new CPU(this.playerMarker);
+}
+
+Game.prototype.playerMove = function(target){
+  var row = $(target).parent().parent().children().index($(target).parent());
+  var col = $(target).parent().children().index($(target));
+  this.board.setMarker(row, col, this.playerMarker);
+}
+
+Game.prototype.checkGameOver = function(){
+  this.won = this.board.checkWinner();
+  if(this.won === this.playerMarker){
+    alert("You won!");
+    this.board.$el.find("td").unbind("click");
+  }
+  else if(this.won === this.cpu.marker){
+    alert("You lost!");
+    this.board.$el.find("td").unbind("click");
+  }
+}
+
 function CPU(playerMarker){
   this.marker = playerMarker === 'X' ? 'O' : 'X';
+}
+
+CPU.prototype.nextMove = function(board){
+  var move = {};
+  board.$el.find("td").each(function(){
+    if($(this).html()===""){
+      move.row = $(this).parent().parent().children().index($(this).parent());
+      move.col = $(this).parent().children().index($(this));
+      return false;
+    }
+  });
+  return move;
 }
 
 function Board(el){
@@ -50,8 +86,10 @@ Board.prototype = (function(){
     var winner = false;
     for(var row=0; row<3; row++){
       if (cell(self, row, 0).html() === cell(self, row, 1).html() && cell(self, row, 1).html() === cell(self, row, 2).html()){
-        winner = true;
-        break;
+        if(cell(self, row, 0).html()){
+          winner = cell(self, row, 0).html();
+          break;
+        }
       }
     }
     return winner;
@@ -61,16 +99,28 @@ Board.prototype = (function(){
     var winner = false;
     for(var col=0; col<3; col++){
       if(cell(self, 0, col).html() === cell(self, 1, col).html() && cell(self, 1, col).html() === cell(self, 2, col).html()){
-        winner = true;
-        break;
+        if(cell(self, 0, col).html() != ""){
+          winner = cell(self,0,col).html();
+          break;
+        }
       }
     }
     return winner;
   }
 
   var checkDiagonals = function(self){
-    return (cell(self, 0, 0).html() === cell(self, 1, 1).html() && cell(self, 1, 1).html() === cell(self, 2, 2).html()) ||
-           (cell(self, 0, 2).html() === cell(self, 1, 1).html() && cell(self, 1, 1).html() === cell(self, 2, 0).html());
+    var winner = false;
+    if (cell(self, 0, 0).html() === cell(self, 1, 1).html() && cell(self, 1, 1).html() === cell(self, 2, 2).html()){
+      if(cell(self, 0, 0).html()){
+        winner = cell(self, 0, 0).html();
+      }
+    }
+    else if (cell(self, 0, 2).html() === cell(self, 1, 1).html() && cell(self, 1, 1).html() === cell(self, 2, 0).html()){
+      if(cell(self, 0, 2).html()){
+        winner = cell(self, 0, 2).html();
+      }
+    }
+    return winner;
   }
 
   //public
@@ -92,6 +142,14 @@ Board.prototype = (function(){
       this.$el.find("td").each(function(){
         $(this).html("");
       });
+    },
+
+    spaceRemaining: function(){
+      var numSpaces = 0;
+      this.$el.find("td").each(function(){
+        if($(this).html() === ""){numSpaces++}
+      }); 
+      return numSpaces;
     }
   };
 })();
