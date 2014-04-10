@@ -4,6 +4,9 @@ function CPU(playerMarker){
 }
 
 CPU.prototype = (function(){
+
+  //private
+
   var cornerTaken = function(self, board){
     return board.getCell(0,0) === self.playerMarker || board.getCell(2,0) === self.playerMarker || 
            board.getCell(0,2) === self.playerMarker || board.getCell(2,2) === self.playerMarker
@@ -103,6 +106,8 @@ CPU.prototype = (function(){
     return assessment;
   }
 
+  //public
+
   return {
     constructor: CPU,
 
@@ -149,6 +154,4 @@ CPU.prototype = (function(){
       return move;
     }
   };
-
-
 })();
