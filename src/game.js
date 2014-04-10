@@ -27,6 +27,7 @@ Game.prototype = (function(){
     start: function(){
       this.board.clearMarkers();
       this.won = false;
+      this.board.$el.find("td").unbind("click");
       this.playerMarker = this.$settings.find("input[name='marker']:checked").val();
       this.playerTurn = this.$settings.find("input[name='turn']:checked").val();
       this.cpu = new CPU(this.playerMarker);
