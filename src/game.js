@@ -35,7 +35,7 @@ Game.prototype = (function(){
 
     gameLoop: function(){
       var self = this;
-      if(this.playerTurn === 'last'){this.cpuMove(); console.log("moving");}
+      if(this.playerTurn === 'last'){this.cpuMove();}
       this.board.$el.find("td").click(function(){
         self.playerMove(this);
         self.cpuMove();
