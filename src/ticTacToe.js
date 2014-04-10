@@ -32,12 +32,10 @@ Game.prototype.start = function(){
 
 Game.prototype.gameLoop = function(){
   var self = this;
+  if(this.playerTurn === 'last'){this.cpuMove();}
   this.board.$el.find("td").click(function(){
     self.playerMove(this);
-    self.checkGameOver();
-    var move = self.cpu.nextMove(self.board);
-    self.board.setMarker(move.row, move.col, self.cpu.marker);
-    self.checkGameOver();
+    self.cpuMove();
   });
 }
 
@@ -45,6 +43,17 @@ Game.prototype.playerMove = function(target){
   var row = $(target).parent().parent().children().index($(target).parent());
   var col = $(target).parent().children().index($(target));
   this.board.setMarker(row, col, this.playerMarker);
+  this.checkGameOver();
+}
+
+Game.prototype.cpuMove = function(){
+  setTimeout(function(){
+    if(this.won === false && this.board.spaceRemaining() > 0){
+      var move = this.cpu.nextMove(this.board);
+      this.board.setMarker(move.row, move.col, this.cpu.marker);
+      this.checkGameOver();
+    }
+  }, 500);
 }
 
 Game.prototype.checkGameOver = function(){

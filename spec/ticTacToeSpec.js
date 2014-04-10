@@ -42,6 +42,12 @@ describe("Game", function() {
       game.board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
       expect(spy).toHaveBeenCalled();
     });
+
+    it("calls on the cpu to move after a player move", function(){
+      var spy = spyOn(game,'cpuMove');
+      game.board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   describe("#click new game with no selections", function(){
@@ -74,6 +80,13 @@ describe("Game", function() {
     it("instantiates and sets the cpu in the game", function(){
       $("#settings input[type='submit']").trigger("click");
       expect(game.cpu.constructor).toEqual(CPU);
+    });
+
+    it("calls on the cpu to move first if the player chooses to go last", function(){
+      $("input[value='last']").trigger("click");
+      var spy = spyOn(game, 'cpuMove');
+      $("#settings input[type='submit']").trigger("click");
+      expect(spy).toHaveBeenCalled();
     });
   });
 
