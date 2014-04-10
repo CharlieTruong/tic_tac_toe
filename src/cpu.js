@@ -134,11 +134,9 @@ CPU.prototype = (function(){
         move = {row: block.row, col: block.col}; 
       }
       else if(fork.possible){
-        console.log('fork');
         move = {row: fork.row, col: fork.col};  
       }
       else if(blockFork.possible){
-        console.log('blockfork');
         move = {row: blockFork.row, col: blockFork.col}
       }
       else if(board.getCell(1,1) == ""){
@@ -151,7 +149,6 @@ CPU.prototype = (function(){
         move = {row: corner.row, col: corner.col}  
       }
       else if(side.possible){
-        console.log('side');
         move = {row: side.row, col: side.col}  
       }
       return move;
