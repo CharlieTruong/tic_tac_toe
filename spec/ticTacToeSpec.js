@@ -23,6 +23,7 @@ describe("Game", function() {
     beforeEach(function(){
       game.playerMarker = 'X';
       game.cpu = new CPU(game.playerMarker);
+      game.gameLoop();
     });
 
     it("Board#setMarker is called when a table cell is clicked", function(){

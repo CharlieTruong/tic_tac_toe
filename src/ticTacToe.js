@@ -11,14 +11,6 @@ function Game(settingsEl, boardEl) {
   this.cpu;
   var self = this;
 
-  this.board.$el.find("td").click(function(){
-    self.playerMove(this);
-    self.checkGameOver();
-    var move = self.cpu.nextMove(self.board);
-    self.board.setMarker(move.row, move.col, self.cpu.marker);
-    self.checkGameOver();
-  });
-
   this.$settings.submit(function(e){
     e.preventDefault();
     if(self.$settings.find("input:checked").length === 0){
@@ -35,6 +27,18 @@ Game.prototype.start = function(){
   this.playerMarker = this.$settings.find("input[name='marker']:checked").val();
   this.playerTurn = this.$settings.find("input[name='turn']:checked").val();
   this.cpu = new CPU(this.playerMarker);
+  this.gameLoop();
+}
+
+Game.prototype.gameLoop = function(){
+  var self = this;
+  this.board.$el.find("td").click(function(){
+    self.playerMove(this);
+    self.checkGameOver();
+    var move = self.cpu.nextMove(self.board);
+    self.board.setMarker(move.row, move.col, self.cpu.marker);
+    self.checkGameOver();
+  });
 }
 
 Game.prototype.playerMove = function(target){
