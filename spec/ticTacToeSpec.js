@@ -165,6 +165,21 @@ describe("CPU", function(){
       game.board.setMarker(2, 2, game.playerMarker);
       expect(game.cpu.nextMove(game.board, game)).toEqual({row: 1, col: 2});
     });
+
+    it("looks to create a fork for two chances to win", function(){
+      game.board.setMarker(0, 0, game.cpu.marker);
+      game.board.setMarker(2, 2, game.cpu.marker);
+      game.board.setMarker(1, 1, game.playerMarker);
+      game.board.setMarker(2, 0, game.playerMarker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 2});
+    });
+
+    it("blocks a player's possibility of a fork", function(){
+      game.board.setMarker(0, 0, game.playerMarker);
+      game.board.setMarker(2, 2, game.playerMarker);
+      game.board.setMarker(1, 1, game.cpu.marker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 1});
+    });
   });
 });
 
