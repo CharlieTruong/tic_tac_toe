@@ -57,6 +57,10 @@ Game.prototype.checkGameOver = function(){
     alert("You lost!");
     this.board.$el.find("td").unbind("click");
   }
+  else if(this.board.spaceRemaining() === 0){
+   alert("It's a tie!");
+   this.board.$el.find("td").unbind("click"); 
+  }
 }
 
 function CPU(playerMarker){

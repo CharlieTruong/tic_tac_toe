@@ -79,20 +79,32 @@ describe("Game", function() {
 
   describe("#checkGameOver", function(){
     beforeEach(function(){
-      game.board.setMarker(0,1,"X");
-      game.board.setMarker(1,1,"X");
-      game.board.setMarker(2,1,"X");
       game.playerMarker = 'X';
       game.cpu = {marker: 'O'};
     });
 
     it("declares a winner and ends the game", function(){
+      game.board.setMarker(0,1,"X");
+      game.board.setMarker(1,1,"X");
+      game.board.setMarker(2,1,"X");
+      var spy = spyOn(window, 'alert');
+      game.checkGameOver();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("declares a tie if there is no winner after 9 moves and ends the game", function(){
+      game.board.setMarker(0,0,"O");game.board.setMarker(0,1,"X");game.board.setMarker(0,2,"O");
+      game.board.setMarker(1,0,"X");game.board.setMarker(1,1,"X");game.board.setMarker(1,2,"O");
+      game.board.setMarker(2,0,"X");game.board.setMarker(2,1,"O");game.board.setMarker(2,2,"X");
       var spy = spyOn(window, 'alert');
       game.checkGameOver();
       expect(spy).toHaveBeenCalled();
     });
 
     it("prevents new click events after the game is over", function(){
+      game.board.setMarker(0,1,"X");
+      game.board.setMarker(1,1,"X");
+      game.board.setMarker(2,1,"X");
       spyOn(window, 'alert');
       game.checkGameOver();
       game.board.$el.find("tr:eq(2) td:eq(2)").trigger("click");
