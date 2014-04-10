@@ -24,6 +24,7 @@ function Game(settingsEl, boardEl) {
 
 Game.prototype.start = function(){
   this.board.clearMarkers();
+  this.won = false;
   this.playerMarker = this.$settings.find("input[name='marker']:checked").val();
   this.playerTurn = this.$settings.find("input[name='turn']:checked").val();
   this.cpu = new CPU(this.playerMarker);
@@ -32,7 +33,7 @@ Game.prototype.start = function(){
 
 Game.prototype.gameLoop = function(){
   var self = this;
-  if(this.playerTurn === 'last'){this.cpuMove();}
+  if(this.playerTurn === 'last'){this.cpuMove(); console.log("moving");}
   this.board.$el.find("td").click(function(){
     self.playerMove(this);
     self.cpuMove();
@@ -48,13 +49,11 @@ Game.prototype.playerMove = function(target){
 
 Game.prototype.cpuMove = function(){
   var self = this;
-  setTimeout(function(){
-    if(self.won === false && self.board.spaceRemaining() > 0){
-      var move = self.cpu.nextMove(self.board, self);
-      self.board.setMarker(move.row, move.col, self.cpu.marker);
-      self.checkGameOver();
-    }
-  }, 500);
+  if(self.won === false && self.board.spaceRemaining() > 0){
+    var move = self.cpu.nextMove(self.board, self);
+    self.board.setMarker(move.row, move.col, self.cpu.marker);
+    self.checkGameOver();
+  }
 }
 
 Game.prototype.checkGameOver = function(){
@@ -141,6 +140,43 @@ CPU.prototype = (function(){
     return assessment;
   }
 
+  var oppositeCorner = function(self, board){
+    var corners = [{row: 0, col: 0}, {row: 0, col: 2}, {row: 2, col: 0}, {row: 2, col: 2}];
+    var opposite = [{row: 2, col: 2}, {row: 2, col: 0}, {row: 0, col: 2}, {row: 0, col: 0}];
+    var assessment = {possible: false};
+    for(var i=0; i < corners.length; i++){
+      if(board.getCell(corners[i].row, corners[i].col) === self.playerMarker &&  board.getCell(opposite[i].row, opposite[i].col) === ""){
+        assessment = {possible: true, row: opposite[i].row, col: opposite[i].col};
+        break;
+      }
+    }
+    return assessment;
+  }
+
+  var anyCorner = function(self, board){
+    var corners = [{row: 0, col: 0}, {row: 0, col: 2}, {row: 2, col: 0}, {row: 2, col: 2}];
+    var assessment = {possible: false};
+    for(var i=0; i < corners.length; i++){
+      if(board.getCell(corners[i].row, corners[i].col) === ""){
+        assessment = {possible: true, row: corners[i].row, col: corners[i].col};
+        break;
+      }
+    }
+    return assessment;
+  }
+
+  var anySide = function(self, board){
+    var sides = [{row: 1, col: 0}, {row: 1, col: 2}, {row: 0, col: 1}, {row: 2, col: 1}];
+    var assessment = {possible: false};
+    for(var i=0; i < sides.length; i++){
+      if(board.getCell(sides[i].row, sides[i].col) === ""){
+        assessment = {possible: true, row: sides[i].row, col: sides[i].col};
+        break;
+      }
+    }
+    return assessment;
+  }
+
   return {
     constructor: CPU,
 
@@ -150,24 +186,39 @@ CPU.prototype = (function(){
       var block = winAssess(this.playerMarker, board);
       var fork = forkAssess(this.marker, board);
       var blockFork = blockForkAssess(this, board); 
-
-      if(win.possible){
+      var oppCorner = oppositeCorner(this, board);
+      var corner = anyCorner(this, board);
+      var side = anySide(this, board);
+      
+      if(board.spaceRemaining() === 9){
+        move = {row: 0, col: 0};
+      }
+      else if(board.spaceRemaining() === 8 && cornerTaken(this, board)){
+        move = {row: 1, col: 1};
+      }
+      else if(win.possible){
         move = {row: win.row, col: win.col};
       }
       else if(block.possible){
         move = {row: block.row, col: block.col}; 
       }
       else if(fork.possible){
-       move = {row: fork.row, col: fork.col};  
+        move = {row: fork.row, col: fork.col};  
       }
       else if(blockFork.possible){
         move = {row: blockFork.row, col: blockFork.col}
       }
-      else if(board.spaceRemaining() === 9){
-        move = {row: 0, col: 0};
+      else if(board.getCell(1,1) == ""){
+        move = {row: 1, col: 1}; 
       }
-      else if(board.spaceRemaining() === 8 && cornerTaken(this, board)){
-        move = {row: 1, col: 1};
+      else if(oppCorner.possible){
+        move = {row: oppCorner.row, col: oppCorner.col} 
+      }
+      else if(corner.possible){
+        move = {row: corner.row, col: corner.col}  
+      }
+      else if(side.possible){
+        move = {row: side.row, col: side.col}  
       }
       return move;
     }

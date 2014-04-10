@@ -180,6 +180,30 @@ describe("CPU", function(){
       game.board.setMarker(1, 1, game.cpu.marker);
       expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 1});
     });
+
+    it("takes the center if it is open and if the above moves are unavailable", function(){
+      game.board.setMarker(0, 0, game.playerMarker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 1, col: 1});
+    });
+
+    it("takes the opposite corner of a player marker if the above moves are unavailable", function(){
+      game.board.setMarker(0, 0, game.playerMarker);
+      game.board.setMarker(1, 1, game.cpu.marker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 2, col: 2});
+    });
+
+    it("takes any empty corner if the above moves are unavailable", function(){
+      game.board.setMarker(0, 1, game.playerMarker);
+      game.board.setMarker(1, 1, game.cpu.marker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 0});
+    });
+
+    it("takes any empty side if the above moves are unavailable", function(){
+      game.board.setMarker(0, 0, 'Y'); game.board.setMarker(0, 1, 'Y'); game.board.setMarker(0, 2, 'Y');
+      game.board.setMarker(1, 0, 'Y'); game.board.setMarker(1, 1, 'Y'); game.board.setMarker(1, 2, 'Y');
+      game.board.setMarker(2, 0, 'Y');game.board.setMarker(2, 2, 'Y');
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 2, col: 1});
+    });    
   });
 });
 
