@@ -98,15 +98,33 @@ CPU.prototype = (function(){
     return assessment;
   }
 
+  var blockAssess = function(self, board){
+    var assessment = {necessary: false};
+    var possibilities = board.emptySpaces();
+    for (var i=0; i < possibilities.length; i++){
+      var newBoard = new Board(board.$el.clone());
+      newBoard.setMarker(possibilities[i].row, possibilities[i].col, self.playerMarker);
+      if(self.playerMarker === newBoard.checkWinner()){
+        assessment = {necessary: true, row: possibilities[i].row, col: possibilities[i].col};
+        break;
+      }
+    }
+    return assessment;
+  }
+
   return {
     constructor: CPU,
 
     nextMove: function(board, game){
       var move = {};
       var win = winAssess(this, board);
+      var block = blockAssess(this, board);
 
       if(win.possible){
         move = {row: win.row, col: win.col};
+      }
+      else if(block.necessary){
+        move = {row: block.row, col: block.col}; 
       }
       else if(board.spaceRemaining() === 9){
         move = {row: 0, col: 0};

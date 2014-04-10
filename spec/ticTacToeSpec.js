@@ -159,6 +159,12 @@ describe("CPU", function(){
       game.board.setMarker(2, 1, game.cpu.marker);
       expect(game.cpu.nextMove(game.board, game)).toEqual({row: 1, col: 1});
     });
+
+    it("blocks the player from winning", function(){
+      game.board.setMarker(0, 2, game.playerMarker);
+      game.board.setMarker(2, 2, game.playerMarker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 1, col: 2});
+    });
   });
 });
 
