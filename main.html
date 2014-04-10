@@ -8,19 +8,29 @@
   <script type="text/javascript" src="src/ticTacToe.js"></script>
 </head>
 <body>
-  <h2>Tic Tac Toe</h2>
-  <table id="board">
-    <tr><td></td><td></td><td></td></tr>
-    <tr><td></td><td></td><td></td></tr>
-    <tr><td></td><td></td><td></td></tr>
-  </table>
-  <h5>Game Settings</h5>
-  <form id="settings">
-    <input type="radio" name="marker" value="X">X
-    <input type="radio" name="marker" value="O">O<br>
-    <input type="radio" name="turn" value="first">First
-    <input type="radio" name="turn" value="last">Last<br>
-    <input type="submit" value="New Game">
-  </form>
+  <div class="container">
+    <div class="game">
+      <h2>Tic Tac Toe</h2>
+      <table id="board">
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+      </table>
+      <h3>Game Settings</h3>
+      <form id="settings">
+        <p>Choose Your Marker</p>
+        <label for="X">X</label>
+        <input type="radio" name="marker" value="X">
+        <label for="X">O</label>
+        <input type="radio" name="marker" value="O"><br>
+        <p>Choose Whether to Go First</p>
+        <label for="first">First</label>
+        <input type="radio" name="turn" value="first">
+        <label for="first">Last</label>
+        <input type="radio" name="turn" value="last"><br>
+        <input type="submit" value="New Game">
+      </form>
+    </div>
+  </div>
 </body>
 </html>
