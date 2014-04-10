@@ -60,7 +60,7 @@ CPU.prototype = (function(){
       for (var i=0; i < possibilities.length; i++){
         var newBoard = new Board(board.$el.clone());
         newBoard.setMarker(possibilities[i].row, possibilities[i].col, self.marker);
-        if(winAssess(self.marker, newBoard) != forkAssess(self.playerMarker, newBoard)){
+        if(winAssess(self.marker, newBoard).possible === true && forkAssess(self.playerMarker, newBoard).possible === false){
           assessment = {possible: true, row: possibilities[i].row, col: possibilities[i].col};
           break;
         }
@@ -134,9 +134,11 @@ CPU.prototype = (function(){
         move = {row: block.row, col: block.col}; 
       }
       else if(fork.possible){
+        console.log('fork');
         move = {row: fork.row, col: fork.col};  
       }
       else if(blockFork.possible){
+        console.log('blockfork');
         move = {row: blockFork.row, col: blockFork.col}
       }
       else if(board.getCell(1,1) == ""){
@@ -149,6 +151,7 @@ CPU.prototype = (function(){
         move = {row: corner.row, col: corner.col}  
       }
       else if(side.possible){
+        console.log('side');
         move = {row: side.row, col: side.col}  
       }
       return move;
