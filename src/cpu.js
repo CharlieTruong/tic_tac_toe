@@ -53,6 +53,17 @@ CPU.prototype = (function(){
     return assessment;
   }
 
+  var forkAssessPosition = function(row, col, marker, board){
+    var newBoard = new Board(board.$el.clone());
+    newBoard.setMarker(row, col, marker);
+    if(winPossibleCount(marker, newBoard) === 2){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   var blockForkAssess = function(self, board){
     var assessment = {possible: false};
     if (forkAssess(self.playerMarker, board).possible){
@@ -60,7 +71,8 @@ CPU.prototype = (function(){
       for (var i=0; i < possibilities.length; i++){
         var newBoard = new Board(board.$el.clone());
         newBoard.setMarker(possibilities[i].row, possibilities[i].col, self.marker);
-        if(winAssess(self.marker, newBoard).possible === true && forkAssess(self.playerMarker, newBoard).possible === false){
+        var win = winAssess(self.marker, newBoard);
+        if(win.possible === true && forkAssessPosition(win.row, win.col, self.playerMarker, board) === false){
           assessment = {possible: true, row: possibilities[i].row, col: possibilities[i].col};
           break;
         }

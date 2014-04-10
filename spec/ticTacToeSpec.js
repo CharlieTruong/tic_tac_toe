@@ -178,7 +178,7 @@ describe("CPU", function(){
       game.board.setMarker(0, 0, game.playerMarker);
       game.board.setMarker(2, 2, game.playerMarker);
       game.board.setMarker(1, 1, game.cpu.marker);
-      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 2});
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 1});
     });
 
     it("takes the center if it is open and if the above moves are unavailable", function(){
