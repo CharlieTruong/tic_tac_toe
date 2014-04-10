@@ -133,20 +133,31 @@ describe("CPU", function(){
   beforeEach(function(){
     setUpHTMLFixture();  
     game = new Game($("#settings"), $("#board"));
-    var playerMarker = 'X'
-    cpu = new CPU(playerMarker);
+    game.playerMarker = 'X'
+    game.cpu = new CPU(game.playerMarker);
   });
 
   describe("#marker",function(){
     it("returns the opposite of the player marker", function(){
-      expect(cpu.marker).toEqual('O');
+      expect(game.cpu.marker).toEqual('O');
     });
   });
 
   describe("#nextMove", function(){
-    it("returns an object with the row and col of the next empty space", function(){
-      game.board.setMarker(0,0,'X');
-      expect(cpu.nextMove(game.board)).toEqual({row: 0, col: 1});
+    it("takes a corner if the cpu moves first", function(){
+      game.playerTurn = 'last';
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 0, col: 0});
+    });
+
+    it("takes the center if the player moves in a corner first", function(){
+      game.board.setMarker(0, 0, game.playerMarker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 1, col: 1});
+    });    
+
+    it("makes a winning move if it has two markers in a row", function(){
+      game.board.setMarker(0, 1, game.cpu.marker);
+      game.board.setMarker(2, 1, game.cpu.marker);
+      expect(game.cpu.nextMove(game.board, game)).toEqual({row: 1, col: 1});
     });
   });
 });
@@ -216,6 +227,21 @@ describe("Board", function(){
       expect(board.spaceRemaining()).toEqual(7);
     });
   });
+
+  describe("#getCell", function(){
+    it("returns the marker, if any, at the given location", function(){
+      board.setMarker(0,0,'X');
+      expect(board.getCell(0,0)).toEqual('X');
+    });
+  });
+
+  describe("#emptySpaces", function(){
+    it("returns the empty spaces on the board", function(){
+      board.setMarker(1,1,"X");
+      board.setMarker(2,2,"X");
+      expect(board.emptySpaces().length).toEqual(7);
+    });
+  })
 });
 
 

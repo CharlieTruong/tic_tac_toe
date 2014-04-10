@@ -47,11 +47,12 @@ Game.prototype.playerMove = function(target){
 }
 
 Game.prototype.cpuMove = function(){
+  var self = this;
   setTimeout(function(){
-    if(this.won === false && this.board.spaceRemaining() > 0){
-      var move = this.cpu.nextMove(this.board);
-      this.board.setMarker(move.row, move.col, this.cpu.marker);
-      this.checkGameOver();
+    if(self.won === false && self.board.spaceRemaining() > 0){
+      var move = self.cpu.nextMove(self.board, self);
+      self.board.setMarker(move.row, move.col, self.cpu.marker);
+      self.checkGameOver();
     }
   }, 500);
 }
@@ -73,20 +74,53 @@ Game.prototype.checkGameOver = function(){
 }
 
 function CPU(playerMarker){
+  this.playerMarker = playerMarker;
   this.marker = playerMarker === 'X' ? 'O' : 'X';
 }
 
-CPU.prototype.nextMove = function(board){
-  var move = {};
-  board.$el.find("td").each(function(){
-    if($(this).html()===""){
-      move.row = $(this).parent().parent().children().index($(this).parent());
-      move.col = $(this).parent().children().index($(this));
-      return false;
+CPU.prototype = (function(){
+  var cornerTaken = function(self, board){
+    return board.getCell(0,0) === self.playerMarker || board.getCell(2,0) === self.playerMarker || 
+           board.getCell(0,2) === self.playerMarker || board.getCell(2,2) === self.playerMarker
+  }
+
+  var winAssess = function(self, board){
+    var assessment = {possible: false};
+    var possibilities = board.emptySpaces();
+    for (var i=0; i < possibilities.length; i++){
+      var newBoard = new Board(board.$el.clone());
+      newBoard.setMarker(possibilities[i].row, possibilities[i].col, self.marker);
+      if(self.marker === newBoard.checkWinner()){
+        assessment = {possible: true, row: possibilities[i].row, col: possibilities[i].col};
+        break;
+      }
     }
-  });
-  return move;
-}
+    return assessment;
+  }
+
+  return {
+    constructor: CPU,
+
+    nextMove: function(board, game){
+      var move = {};
+      var win = winAssess(this, board);
+
+      if(win.possible){
+        move = {row: win.row, col: win.col};
+      }
+      else if(board.spaceRemaining() === 9){
+        move = {row: 0, col: 0};
+      }
+      else if(board.spaceRemaining() === 8 && cornerTaken(this, board)){
+        move = {row: 1, col: 1};
+      }
+      return move;
+    }
+  };
+
+
+})();
+
 
 function Board(el){
   this.$el = el;
@@ -167,6 +201,22 @@ Board.prototype = (function(){
         if($(this).html() === ""){numSpaces++}
       }); 
       return numSpaces;
+    },
+
+    getCell: function(row, col){
+      return cell(this, row, col).html();
+    }, 
+
+    emptySpaces: function(){
+      var empty = [];
+      this.$el.find("td").each(function(){
+        if($(this).html() === ""){
+          var row = $(this).parent().parent().children().index($(this).parent());
+          var col = $(this).parent().children().index($(this));
+          empty.push({row: row, col: col});
+        }
+      });
+      return empty;
     }
   };
 })();
